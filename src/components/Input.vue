@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="form-control w-full max-w-xs">
+  <div class="form-control w-full max-w-xs px-5 ">
       <label class="label">
         <span class="label-text">{{ props.title }}</span>
       </label>

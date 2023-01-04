@@ -17,7 +17,7 @@ const props = defineProps({
     <div class="card-body">
       <h2 class="card-title text-xl md:text-2l">
         {{ props.title }}
-        <div class="badge badge-secondary">NEW</div>
+        <div class="badge badge-accent text-stone-50">NEW</div>
       </h2>
       <p class="text-base md:text-lg">ISBN: {{ props.isbn }}</p>
       <div class="card-actions justify-end">

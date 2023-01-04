@@ -1,7 +1,16 @@
 <script setup>
 import NavBar from "./components/NavBar.vue";
 import Footer from "./components/Footer.vue";
-import { ref } from "vue";
+
+window.onload = () => {
+  let theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    document.getElementById("check").checked = false;
+  } else {
+    document.getElementById("check").checked = true;
+  }
+};
+
 </script>
 
 <template>
