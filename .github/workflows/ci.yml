@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,60 @@ jobs:
 
     - name: Build project
       run: pnpm run build
+
+    - name: Archive build files
+      run: tar -czf build.tar.gz ./dist
+
+    - name: Upload build files
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-files
+        path: build.tar.gz
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download build files
+      uses: actions/download-artifact@v3
+      with:
+        name: build-files
+        path: ./build
+
+    - name: Install SSH client
+      run: sudo apt-get install -y openssh-client
+
+    - name: Copy build files to VM
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SSH_PORT: ${{ secrets.SSH_PORT }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -p $SSH_PORT $REMOTE_HOST >> ~/.ssh/known_hosts
+
+        scp -P $SSH_PORT -i ~/.ssh/id_rsa build/build.tar.gz $REMOTE_USER@$REMOTE_HOST:/testCI
+
+    - name: Deploy Docker container on VM
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SSH_PORT: ${{ secrets.SSH_PORT }}
+      run: |
+        ssh -p $SSH_PORT -i ~/.ssh/id_rsa $REMOTE_USER@$REMOTE_HOST << 'EOF'
+          cd /testCI
+          tar -xzf build.tar.gz
+          docker stop deployWeb || true
+          docker rm deployWeb || true
+          docker build -t deployImg:latest .
+          docker run -d --name deployWeb -p 80:80 deployImg:latest
+        EOF
