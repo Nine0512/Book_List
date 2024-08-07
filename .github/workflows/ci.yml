@@ -84,5 +84,5 @@ jobs:
           docker stop deployWeb || true
           docker rm deployWeb || true
           docker build -t deployimg:latest .
-          docker run -d --name deployWeb -p 4432:80 deployimg:latest
+          docker run -d --name deployWeb -p 80:80 deployimg:latest
         EOF
