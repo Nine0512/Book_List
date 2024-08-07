@@ -83,6 +83,6 @@ jobs:
           tar -xzf build.tar.gz
           docker stop deployWeb || true
           docker rm deployWeb || true
-          docker build -t deployImg:latest .
-          docker run -d --name deployWeb -p 80:80 deployImg:latest
+          docker build -t deployimg:latest .
+          docker run -d --name deployWeb -p 4432:80 deployimg:latest
         EOF
