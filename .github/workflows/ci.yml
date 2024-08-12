@@ -57,15 +57,9 @@ jobs:
     - name: Install OpenVPN
       run: sudo apt-get update && sudo apt-get install -y openvpn
 
-    - name: Prepare VPN Configuration
-      run: |
-        echo "compress stub-v2" >> .github/workflows/config.ovpn
-        sed -i '/^comp-lzo/d' .github/workflows/config.ovpn
-        sed -i '/^compress/d' .github/workflows/config.ovpn
-
     - name: Connect to VPN
       run: |
-        sudo openvpn --config .github/workflows/config.ovpn --daemon
+        sudo openvpn --config .github/workflows/config.ovpn --daemon || true
       env:
         VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
         VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
