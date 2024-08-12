@@ -59,6 +59,7 @@ jobs:
 
     - name: Connect to VPN
       run: |
+        echo "compress stub-v2" >> .github/workflows/config.ovpn
         sudo openvpn --config .github/workflows/config.ovpn --daemon
       env:
         VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
