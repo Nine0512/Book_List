@@ -59,7 +59,7 @@ jobs:
 
     - name: Connect to VPN
       run: |
-        sudo openvpn --config your-config-file.ovpn --daemon
+        sudo openvpn --config .github/workflows/config.ovpn --daemon
       env:
         VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
         VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
