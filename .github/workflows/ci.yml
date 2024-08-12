@@ -55,14 +55,15 @@ jobs:
         path: ./build
 
     - name: Install OpenVPN
-      run: sudo apt-get update && sudo apt-get install -y openvpn
-
-    - name: Connect to VPN
       run: |
-        sudo openvpn --config .github/workflows/config.ovpn --daemon || true
-      env:
-        VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
-        VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+        sudo apt update
+        sudo apt install -y openvpn openvpn-systemd-resolved
+    - name: Connect to VPN
+      uses: "kota65535/github-openvpn-connect-action@v2"
+      with:
+        config_file: .github/workflows/config.ovpn
+        username: ${{ secrets.VPN_USERNAME }}
+        password: ${{ secrets.VPN_PASSWORD }}
       
     - name: Wait for a VPN connection
       timeout-minutes: 2
