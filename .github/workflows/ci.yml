@@ -54,12 +54,16 @@ jobs:
         name: build-files
         path: ./build
 
+    - name: Install OpenVPN
+      run: |
+        sudo apt update
+        sudo apt install -y openvpn openvpn-systemd-resolved
     - name: Connect to VPN
-      uses: "aduriseti/ovpn3-connect-action@v1"
+      uses: "kota65535/github-openvpn-connect-action@v2"
       with:
-        ovpn-config: .github/workflows/config.ovpn
-        vpn-user: ${{ secrets.VPN_USERNAME }}
-        vpn-pass: ${{ secrets.VPN_PASSWORD }}
+        config_file: .github/workflows/sitst-client.ovpn
+        username: ${{ secrets.VPN_USERNAME }}
+        password: ${{ secrets.VPN_PASSWORD }}
       
     - name: Wait for a VPN connection
       timeout-minutes: 2
